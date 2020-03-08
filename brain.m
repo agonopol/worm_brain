@@ -38,7 +38,7 @@ for file = files'
     [dest, ~, ~] = fileparts(options.destination);
     mkdir_if_not_exists(dest);
     
-    condense(adj, neurons, options);
+    condensed = condense(adj, neurons, options);
     
     close all force;
     close all hidden;
