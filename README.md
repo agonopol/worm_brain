@@ -29,3 +29,44 @@ While the number of clusters is > 1
                 obj = obj.controlSigma();
                 if within the last 10 iterations the sum of eigenvalues changed by 5% then increase sigma by 1.1
 
+To run:
+
+The main driver is brain.m, this sets up which CSV file to read in the line:
+    files = dir('data/*.csv'); //change the 'data/*.csv' to a specific 'path to csv file.csv' 
+
+lines:
+jsh = arrayfun(@(x) sprintf('JSH%03d', x), 1:282, 'UniformOutput', false);
+n2u = [arrayfun(@(x) sprintf('N2U_%03d', x), 2:182, 'UniformOutput', false) ...
+       arrayfun(@(x) sprintf('N2U_VC_%03d', x), 1:34, 'UniformOutput', false) ];
+
+and
+
+    if not(isempty(strfind(path, 'N2U')))
+        rows = find(arrayfun(@(x1) any(strcmp(x1, n2u)), adj.EMSection));
+    else
+        rows = find(arrayfun(@(x1) any(strcmp(x1, jsh)), adj.EMSection));
+    end
+
+change the data to have the correct naming conventions for the worms, if you are looking to run it on other data you can remove or commend these out
+
+line
+    condensed = condense(adj, neurons, options);
+
+Generates the condensation clustering and its history:
+
+The history of the merging process is kept in the condensed.contractionSequence(:, :, 1...steps), this is the spacial coordinates of the eigen vector embedding of the input data, this is what you would use if you wanted to plot it with phate
+
+condensed.clusterAssignments(:, 1...steps) is the cluster assigments after each step, you can use those to check the quality scores and centrality based 
+
+quality comparison is done inside the lib/condense.m file
+
+given the original adj matrix:
+
+quality(adj, 'modularity', ...
+            'maxk', 50, ...
+            'output', strcat(condensed.options.destination, 'modularity-comparison.png'), ...
+            'condensation', condensed.clusterAssignments, ... 
+            'k-means', kmeanscompare(adj, condensed.clusterAssignments), ...
+            'agglomerative', hierarchicalcompare(adj, condensed.clusterAssignments));
+
+This compare the quality given the cluster assigments over the number of clusters/steps
