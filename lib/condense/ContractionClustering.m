@@ -74,6 +74,7 @@ classdef ContractionClustering
                 obj.contractionSequence(:, :, obj.iteration) = inflateClusters(obj.dataContracted, obj.sampleIndices);
                 obj = obj.calcAffinities();
                 obj = obj.saveAffinityMatrix();
+                obj = obj.saveContractionMatrix();
                 obj = obj.spectralDecompose();
                 obj = obj.performContractionMove();
                 obj = obj.mergeEpsilonClusters();
@@ -93,6 +94,11 @@ classdef ContractionClustering
             affinity = obj.normalizedAffinityMatrix;
             epsilon = obj.epsilon;
             save(strcat(obj.options.destination, string(obj.iteration), '-affinity-matrix.mat'), 'affinity','epsilon'); 
+        end
+        
+        function obj = saveContractionMatrix(obj)
+            data = obj.dataContracted;            
+            save(strcat(obj.options.destination, string(obj.iteration), '-contraction-matrix.mat'), 'data'); 
         end
         
         %% Calculate Affinity Matrix
